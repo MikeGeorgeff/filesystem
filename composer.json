@@ -1,0 +1,24 @@
+{
+    "name": "georgeff/filesystem",
+    "description": "A php filesytem wrapper",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mike Georgeff",
+            "email": "mikegeorgeff3@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "symfony/finder": "2.8.*"
+    },
+    "require-dev": {
+        "crysalead/kahlan": "~1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Georgeff\\Filesystem\\": "src/"
+        }
+    }
+}
