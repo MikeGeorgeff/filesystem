@@ -9,6 +9,16 @@ use Georgeff\Filesystem\Exception\DirectoryExistsException;
 class Directory
 {
     /**
+     * Make a new Directory instance
+     *
+     * @return \Georgeff\Filesystem\Directory
+     */
+    public static function make()
+    {
+        return new static();
+    }
+
+    /**
      * Determine if a directory exists
      *
      * @param string $path
@@ -36,6 +46,67 @@ class Directory
         }
 
         return mkdir($path, $mode, $recursive);
+    }
+
+    /**
+     * Move a directory to a different location
+     *
+     * @param string $path
+     * @param string $destination
+     * @param null|int $options
+     * @param bool|false $keep
+     * @return bool
+     *
+     * @throws \Georgeff\Filesystem\Exception\DirectoryExistsException
+     * @throws \Georgeff\Filesystem\Exception\DirectoryNotFoundException
+     */
+    public function move($path, $destination, $options = null, $keep = false)
+    {
+        if (! $this->exists($path)) {
+            throw new DirectoryNotFoundException("The directory [$path] already exists.");
+        }
+
+        if (! $this->exists($destination)) {
+            $this->create($destination, 0777, true);
+        }
+
+        $options = $options ?: \FilesystemIterator::SKIP_DOTS;
+        $items = new \FilesystemIterator($path, $options);
+
+        foreach ($items as $item) {
+            $target = $destination.'/'.$item->getBasename();
+
+            if ($item->isDir()) {
+                $currentPath = $item->getPathname();
+
+                if (! $this->move($currentPath, $target, $options, true)) {
+                    return false;
+                }
+            } elseif (! File::make()->copy($item->getPathname(), $target, true)) {
+                return false;
+            }
+        }
+
+        if (! $keep) {
+            $this->delete($path);
+        }
+
+        return true;
+    }
+
+    /**
+     * Copy a directory to a new location
+     *
+     * @param string $path
+     * @param string $destination
+     * @param null|int $options
+     * @return bool
+     *
+     * @throws \Georgeff\Filesystem\Exception\DirectoryNotFoundException
+     */
+    public function copy($path, $destination, $options = null)
+    {
+        return $this->move($path, $destination, $options, true);
     }
 
     /**
@@ -109,11 +180,56 @@ class Directory
 
         $directories = [];
 
-        foreach (Finder::create()->directories()->in($path)->depth(0) as $directory)
+        foreach (Finder::create()->directories()->in($path) as $directory)
         {
             $directories[] = $directory->getPathname();
         }
 
         return $directories;
+    }
+
+    /**
+     * Delete a directory
+     *
+     * @param string $path
+     * @param bool|false $keep
+     * @return bool
+     *
+     * @throws \Georgeff\Filesystem\Exception\DirectoryNotFoundException
+     */
+    public function delete($path, $keep = false)
+    {
+        if (! $this->exists($path)) {
+            throw new DirectoryNotFoundException("The directory [$path] was not found.");
+        }
+
+        $items = new \FilesystemIterator($path);
+
+        foreach ($items as $item) {
+            if ($item->isDir()) {
+                $this->delete($item->getPathname());
+            } else {
+                File::make()->delete($item->getPathname());
+            }
+        }
+
+        if (! $keep) {
+            rmdir($path);
+        }
+
+        return true;
+    }
+
+    /**
+     * Empty a directory's content keeping the directory
+     *
+     * @param string $path
+     * @return bool
+     *
+     * @throws \Georgeff\Filesystem\Exception\DirectoryNotFoundException
+     */
+    public function clear($path)
+    {
+        return $this->delete($path, true);
     }
 }

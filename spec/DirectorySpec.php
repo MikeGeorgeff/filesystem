@@ -6,6 +6,14 @@ use Georgeff\Filesystem\Exception\DirectoryExistsException;
 
 describe(Directory::class, function () {
 
+    describe('::make()', function () {
+
+        it("makes a new Directory instance", function () {
+            expect(Directory::make())->toBeAnInstanceOf('Georgeff\Filesystem\Directory');
+        });
+
+    });
+
     describe("->exists()", function () {
 
         beforeEach(function () {
@@ -178,6 +186,120 @@ describe(Directory::class, function () {
             $dir = new Directory;
 
             expect(function () use ($dir) { $dir->directories('/folder'); })->toThrow(new DirectoryNotFoundException);
+        });
+
+    });
+
+    describe("->delete()", function () {
+
+        it("deletes a directory an all it's contents", function () {
+            mkdir(__DIR__.'/app');
+            mkdir(__DIR__.'/app/controllers');
+            mkdir(__DIR__.'/app/models');
+            file_put_contents(__DIR__.'/app/router.php', '');
+            file_put_contents(__DIR__.'/app/controllers/Controller.php', '');
+            file_put_contents(__DIR__.'/app/controllers/AuthController.php', '');
+            file_put_contents(__DIR__.'/app/models/User.php', '');
+            $dir = new Directory;
+            $result = $dir->delete(__DIR__.'/app');
+
+            expect($result)->toBe(true);
+            expect(file_exists(__DIR__.'/app/controllers/Controller.php'))->toBe(false);
+            expect(file_exists(__DIR__.'/app/controllers/AuthController.php'))->toBe(false);
+            expect(file_exists(__DIR__.'/app/models/User.php'))->toBe(false);
+            expect(file_exists(__DIR__.'/app/router.php'))->toBe(false);
+            expect(file_exists(__DIR__.'/app/models'))->toBe(false);
+            expect(file_exists(__DIR__.'/app/controllers'))->toBe(false);
+            expect(file_exists(__DIR__.'/app'))->toBe(false);
+        });
+
+        it("throws a DirectoryNotFoundException if the directory does not exist", function () {
+            $dir = new Directory;
+
+            expect(function () use ($dir) { $dir->delete('/folder'); })->toThrow(new DirectoryNotFoundException);
+        });
+
+    });
+
+    describe("->clear()", function () {
+
+        it("empties the contents of a directory, saving the directory", function () {
+            mkdir(__DIR__.'/app');
+            mkdir(__DIR__.'/app/controllers');
+            mkdir(__DIR__.'/app/models');
+            file_put_contents(__DIR__.'/app/router.php', '');
+            file_put_contents(__DIR__.'/app/controllers/Controller.php', '');
+            file_put_contents(__DIR__.'/app/controllers/AuthController.php', '');
+            file_put_contents(__DIR__.'/app/models/User.php', '');
+            $dir = new Directory;
+            $result = $dir->clear(__DIR__.'/app');
+
+            expect($result)->toBe(true);
+            expect(file_exists(__DIR__.'/app/controllers/Controller.php'))->toBe(false);
+            expect(file_exists(__DIR__.'/app/controllers/AuthController.php'))->toBe(false);
+            expect(file_exists(__DIR__.'/app/models/User.php'))->toBe(false);
+            expect(file_exists(__DIR__.'/app/router.php'))->toBe(false);
+            expect(file_exists(__DIR__.'/app/models'))->toBe(false);
+            expect(file_exists(__DIR__.'/app/controllers'))->toBe(false);
+            expect(file_exists(__DIR__.'/app'))->toBe(true);
+            rmdir(__DIR__.'/app');
+        });
+
+        it("throws a DirectoryNotFoundException if the directory does not exist", function () {
+            $dir = new Directory;
+
+            expect(function () use ($dir) { $dir->clear('/folder'); })->toThrow(new DirectoryNotFoundException);
+        });
+
+    });
+
+    describe("->move()", function () {
+
+        it("moves a directory to a different location", function () {
+            mkdir(__DIR__.'/folder');
+            mkdir(__DIR__.'/app');
+            mkdir(__DIR__.'/app/controllers');
+            file_put_contents(__DIR__.'/app/router.php', '');
+            file_put_contents(__DIR__.'/app/controllers/Controller.php', '');
+            $dir = new Directory;
+            $dir->move(__DIR__.'/app', __DIR__.'/folder/app');
+
+            expect(file_exists(__DIR__.'/app'))->toBe(false);
+            expect(file_exists(__DIR__.'/folder/app'))->toBe(true);
+            expect(file_exists(__DIR__.'/folder/app/controllers'))->toBe(true);
+            expect(file_exists(__DIR__.'/folder/app/controllers/Controller.php'))->toBe(true);
+            expect(file_exists(__DIR__.'/folder/app/router.php'))->toBe(true);
+
+            $dir->delete(__DIR__.'/folder');
+        });
+
+        it("throws a DirectoryNotFoundException if the directory does not exist", function () {
+            $dir = new Directory;
+
+            expect(function () use ($dir) { $dir->move('/folder', ''); })->toThrow(new DirectoryNotFoundException);
+        });
+
+    });
+
+    describe("->copy()", function () {
+
+        it("copies a directory to a new location", function () {
+            mkdir(__DIR__.'/folder');
+            mkdir(__DIR__.'/app');
+            mkdir(__DIR__.'/app/controllers');
+            file_put_contents(__DIR__.'/app/router.php', '');
+            file_put_contents(__DIR__.'/app/controllers/Controller.php', '');
+            $dir = new Directory;
+            $dir->copy(__DIR__.'/app', __DIR__.'/folder/app');
+
+            expect(file_exists(__DIR__.'/app'))->toBe(true);
+            expect(file_exists(__DIR__.'/folder/app'))->toBe(true);
+            expect(file_exists(__DIR__.'/folder/app/controllers'))->toBe(true);
+            expect(file_exists(__DIR__.'/folder/app/controllers/Controller.php'))->toBe(true);
+            expect(file_exists(__DIR__.'/folder/app/router.php'))->toBe(true);
+
+            $dir->delete(__DIR__.'/app');
+            $dir->delete(__DIR__.'/folder');
         });
 
     });
