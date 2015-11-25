@@ -16,6 +16,14 @@ describe(File::class, function () {
         }
     });
 
+    describe("::make()", function () {
+
+        it("creates a new static instance", function () {
+            expect(File::make())->toBeAnInstanceOf('Georgeff\Filesystem\File');
+        });
+
+    });
+
     describe("->exists()", function () {
 
         it("returns true if the file exists", function () {

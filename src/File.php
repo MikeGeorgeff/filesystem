@@ -8,6 +8,16 @@ use Georgeff\Filesystem\Exception\FileExistsException;
 class File
 {
     /**
+     * Make a new File instance
+     *
+     * @return \Georgeff\Filesystem\File
+     */
+    public static function make()
+    {
+        return new static();
+    }
+
+    /**
      * Check if a file exists
      *
      * @param string $path
