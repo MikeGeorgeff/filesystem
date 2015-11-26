@@ -170,7 +170,7 @@ class File
     }
 
     /**
-     * Extract the file name
+     * Return the file name
      *
      * @param string $path
      * @return string
@@ -187,7 +187,7 @@ class File
     }
 
     /**
-     * Extract the file extension
+     * Return the file extension
      *
      * @param string $path
      * @return string
@@ -204,7 +204,7 @@ class File
     }
 
     /**
-     * Extract the file mime type
+     * Return the file mime type
      *
      * @param string $path
      * @return string
