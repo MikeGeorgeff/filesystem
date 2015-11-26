@@ -2,6 +2,10 @@
 
 A simple php file system wrapper.
 
+## Installation
+
+Add `"georgeff/filesystem": "~1.0"` to your composer.json file and run a composer install.
+
 ## Classes
 
 ### File
