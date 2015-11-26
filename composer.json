@@ -1,7 +1,7 @@
 {
     "name": "georgeff/filesystem",
-    "description": "A php filesytem wrapper",
-    "type": "project",
+    "description": "A simple file system wrapper",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
