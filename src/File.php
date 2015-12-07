@@ -8,13 +8,22 @@ use Georgeff\Filesystem\Exception\FileExistsException;
 class File
 {
     /**
-     * Make a new File instance
+     * @var \Georgeff\Filesystem\File
+     */
+    protected static $instance;
+
+    /**
+     * Make a new File singleton instance
      *
      * @return \Georgeff\Filesystem\File
      */
     public static function make()
     {
-        return new static();
+        if (!static::$instance) {
+            static::$instance = new static();
+        }
+
+        return static::$instance;
     }
 
     /**

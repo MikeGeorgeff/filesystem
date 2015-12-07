@@ -9,13 +9,22 @@ use Georgeff\Filesystem\Exception\DirectoryExistsException;
 class Directory
 {
     /**
-     * Make a new Directory instance
+     * @var \Georgeff\Filesystem\Directory
+     */
+    protected static $instance;
+
+    /**
+     * Make a new Directory singleton instance
      *
      * @return \Georgeff\Filesystem\Directory
      */
     public static function make()
     {
-        return new static();
+        if (!static::$instance) {
+            static::$instance = new static();
+        }
+
+        return static::$instance;
     }
 
     /**
