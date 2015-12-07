@@ -87,6 +87,53 @@ class File
     }
 
     /**
+     * Return the contents of a json file as an associative array
+     *
+     * @param string $path
+     * @return array
+     *
+     * @throws \Georgeff\Filesystem\Exception\FileNotFoundException
+     * @throws \InvalidArgumentException
+     */
+    public function getJson($path)
+    {
+        if ($this->exists($path)) {
+            if ($this->extension($path) != 'json') {
+                throw new \InvalidArgumentException("The given file [$path] is not a json file.");
+            }
+
+            $contents = $this->get($path);
+
+            return json_decode($contents, true);
+        }
+
+        throw new FileNotFoundException("The file [$path] was not found.");
+    }
+
+    /**
+     * Write an array to a json file
+     *
+     * @param string $path
+     * @param array  $content
+     * @param bool   $overwrite
+     * @return int
+     *
+     * @throws \Georgeff\Filesystem\Exception\FileNotFoundException
+     */
+    public function putJson($path, array $content, $overwrite = true)
+    {
+        if (false === $overwrite) {
+            if (!$this->exists($path)) {
+                throw new FileNotFoundException("The file [$path] was not found.");
+            }
+
+            $content = array_merge($this->getJson($path), $content);
+        }
+
+        return $this->put($path, json_encode($content, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+    }
+
+    /**
      * Get the content of a required file
      *
      * @param string $path

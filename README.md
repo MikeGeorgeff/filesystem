@@ -57,6 +57,30 @@ bool|true $overwrite if true overwrite existing content, false append the conten
 
 return    int
 
+##### getJson($path)
+Get the contents of a json file as an associative array
+
+string   $path
+
+return   array
+
+throws   Georgeff\Filesystem\Exception\FileNotFoundException
+
+throws   InvalidArgumentException  If the file is not a json file
+
+##### putJson($path, array $content, $overwrite = true)
+Write an array to a json file
+
+string    $path
+
+array     $content
+
+bool|true $overwrite
+
+return    int
+
+throws    Georgeff\Filesystem\Exception\FileNotFoundException
+
 ##### getRequire($path)
 Get the content of a required file
 

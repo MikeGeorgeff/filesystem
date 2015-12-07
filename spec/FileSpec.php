@@ -311,4 +311,83 @@ describe(File::class, function () {
 
     });
 
+    describe("->getJson()", function () {
+
+        it("returns the contents of a json file as an array", function () {
+            $contents = '{ "require": { "php": "<=5.5.9" }, "require-dev": { "some/package": "1.0" } }';
+            file_put_contents(__DIR__.'/file.json', $contents);
+            $file = new File;
+            $result = $file->getJson(__DIR__.'/file.json');
+            unlink(__DIR__.'/file.json');
+            expect($result)->toBe([
+                'require' => [
+                    'php' => '<=5.5.9'
+                ],
+                'require-dev' => [
+                    'some/package' => '1.0'
+                ]
+            ]);
+        });
+
+        it("throws an InvalidArgumentException if the file is not a json file", function () {
+            file_put_contents(__DIR__.'/file.txt', '');
+            $closure = function () {
+                $file = new File;
+                $file->getJson(__DIR__.'/file.txt');
+            };
+
+            expect($closure)->toThrow(new InvalidArgumentException);
+            unlink(__DIR__.'/file.txt');
+        });
+
+        it("throws a FileNotFoundException if the file does not exist", function () {
+            $closure = function () {
+                $file = new File;
+                $file->getJson(__DIR__.'/file.json');
+            };
+
+            expect($closure)->toThrow(new FileNotFoundException);
+        });
+
+    });
+
+    describe("->putJson()", function () {
+
+        it("writes an array to a json file", function () {
+            $file = new File;
+            $file->putJson(__DIR__.'/file.json', ['foo' => 'bar']);
+            $result = $file->getJson(__DIR__.'/file.json');
+            unlink(__DIR__.'/file.json');
+            expect($result)->toBe(['foo' => 'bar']);
+        });
+
+        it("appends an array to a json file", function () {
+            $contents = '{ "require": { "php": "<=5.5.9" }, "require-dev": { "some/package": "1.0" } }';
+            file_put_contents(__DIR__.'/file.json', $contents);
+            $file = new File;
+            $file->putJson(__DIR__.'/file.json', ['foo' => 'bar'], false);
+            $result = $file->getJson(__DIR__.'/file.json');
+            unlink(__DIR__.'/file.json');
+            expect($result)->toBe([
+                'require' => [
+                    'php' => '<=5.5.9'
+                ],
+                'require-dev' => [
+                    'some/package' => '1.0'
+                ],
+                'foo' => 'bar'
+            ]);
+        });
+
+        it("throws a FileNotFoundException if overwrite is false and the file is not found", function () {
+            $closure = function () {
+                $file = new File;
+                $file->putJson(__DIR__.'/file.json', ['foo' => 'bar'], false);
+            };
+
+            expect($closure)->toThrow(new FileNotFoundException);
+        });
+
+    });
+
 });
