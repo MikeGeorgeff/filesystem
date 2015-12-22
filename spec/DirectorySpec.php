@@ -4,7 +4,7 @@ use Georgeff\Filesystem\Directory;
 use Georgeff\Filesystem\Exception\DirectoryNotFoundException;
 use Georgeff\Filesystem\Exception\DirectoryExistsException;
 
-describe(Directory::class, function () {
+describe("Directory", function () {
 
     describe("->exists()", function () {
 

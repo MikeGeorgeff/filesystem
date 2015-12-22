@@ -4,7 +4,7 @@ use Georgeff\Filesystem\File;
 use Georgeff\Filesystem\Exception\FileNotFoundException;
 use Georgeff\Filesystem\Exception\FileExistsException;
 
-describe(File::class, function () {
+describe("File", function () {
 
     beforeEach(function () {
         file_put_contents(__DIR__.'/file.txt', 'Hello World');

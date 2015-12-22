@@ -11,8 +11,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.5.9",
-        "symfony/finder": "2.8.*"
+        "php": ">=5.4.0",
+        "symfony/finder": "2.7.*"
     },
     "require-dev": {
         "crysalead/kahlan": "~1.2"
