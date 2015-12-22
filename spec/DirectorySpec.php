@@ -6,14 +6,6 @@ use Georgeff\Filesystem\Exception\DirectoryExistsException;
 
 describe(Directory::class, function () {
 
-    describe('::make()', function () {
-
-        it("makes a new Directory instance", function () {
-            expect(Directory::make())->toBeAnInstanceOf('Georgeff\Filesystem\Directory');
-        });
-
-    });
-
     describe("->exists()", function () {
 
         beforeEach(function () {

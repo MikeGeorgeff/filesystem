@@ -9,25 +9,6 @@ use Georgeff\Filesystem\Exception\DirectoryExistsException;
 class Directory
 {
     /**
-     * @var \Georgeff\Filesystem\Directory
-     */
-    protected static $instance;
-
-    /**
-     * Make a new Directory singleton instance
-     *
-     * @return \Georgeff\Filesystem\Directory
-     */
-    public static function make()
-    {
-        if (!static::$instance) {
-            static::$instance = new static();
-        }
-
-        return static::$instance;
-    }
-
-    /**
      * Determine if a directory exists
      *
      * @param string $path
@@ -91,7 +72,7 @@ class Directory
                 if (! $this->move($currentPath, $target, $options, true)) {
                     return false;
                 }
-            } elseif (! File::make()->copy($item->getPathname(), $target, true)) {
+            } elseif (! (new File)->copy($item->getPathname(), $target, true)) {
                 return false;
             }
         }
@@ -218,7 +199,7 @@ class Directory
             if ($item->isDir()) {
                 $this->delete($item->getPathname());
             } else {
-                File::make()->delete($item->getPathname());
+                (new File)->delete($item->getPathname());
             }
         }
 
